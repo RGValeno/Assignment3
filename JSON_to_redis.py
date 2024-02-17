@@ -19,5 +19,10 @@ print('**********************reading from redis**********************')
 df_list = result['quoteSummary']['result'][0]['secFilings']
 df = pd.DataFrame(df_list['filings'])
 print(list(df.columns.values))
-df = df[['date', 'type', 'title', 'edgarUrl']
+df = df[['date', 'type', 'title', 'edgarUrl']]
 print(df)
+df['date'] = df['date'].apply(pd.to_datetime)
+df['type'] = pd.Categorical(df.type)
+df['title'] = pd.Categorical(df.title)
+df['edgarUrl'].astype(str)
+print(df.dtypes)
