@@ -15,9 +15,9 @@ r.json().set(data, '$', readAPI.JSON_response)
 
 result = r.json().get(data)
 print('**********************reading from redis**********************')
-print(type(result))
-#print(result)
 
-df = pd.DataFrame(result)
+df_list = result['quoteSummary']['result'][0]['secFilings']
+df = pd.DataFrame(df_list['filings'])
+print(list(df.columns.values))
+df = df[['date', 'type', 'title', 'edgarUrl']
 print(df)
-print(df.columns.tolist())
