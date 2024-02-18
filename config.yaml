@@ -20,3 +20,8 @@ API:
     params: {"startdate": "9/19/2015", "enddate": '9/25/2015', "long": "-122.5076392", "lat": "37.757815"}
     headers: { "X-RapidAPI-Key": "a0dd196a09mshcacea72b440d8e9p15578ajsnb703b6903e99", "X-RapidAPI-Host": "jgentes-Crime-Data-v1.p.rapidapi.com"}
 
+  SEC_filings: 
+    url: https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/get-sec-filings
+    querystring: {"symbol":"AMRN","region":"US","lang":"en-US"}
+    headers: {"X-RapidAPI-Key": "a0dd196a09mshcacea72b440d8e9p15578ajsnb703b6903e99", "X-RapidAPI-Host": "apidojo-yahoo-finance-v1.p.rapidapi.com"}
+
