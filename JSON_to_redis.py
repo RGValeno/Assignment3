@@ -18,6 +18,9 @@ r       = get_redis_connection()
 data    = config['API']['JSON_placeholder']['index']
 
 
+def JSON_into_REDIS():
+
+
 ##### Input JSON into redis
 r.flushall()
 r.json().set(data, '$', readAPI.JSON_response)
