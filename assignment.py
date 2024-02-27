@@ -17,12 +17,12 @@ class Assignment3:
 
     @staticmethod
     def load_config():
-        """Load configuration from the YAML file."""
+        """Load configuration using config.yaml"""
         with open("config.yaml", "r") as file:
             return yaml.safe_load(file)
 
     def get_redis_connection(self):
-        """Create a Redis connection using the configuration."""
+        """Create a Redis connection using the config.yaml."""
         return redis.Redis(
             host=self.config["redis"]["host"],
             port=self.config["redis"]["port"],
@@ -33,7 +33,7 @@ class Assignment3:
         )
 
     def set_api_details(self):
-        """Set API details from configuration."""
+        """Set API details using config.yaml"""
         api_config = self.config['API']['SEC_filings']
         self.url = api_config['url']
         self.headers = api_config['headers']
@@ -60,11 +60,11 @@ class Assignment3:
         if result:
             df_list = result['quoteSummary']['result'][0]['secFilings']['filings']
             self.df = pd.DataFrame(df_list)
-            self.df = self.df[['date', 'type', 'title', 'edgarUrl']]
 
     def clean_data(self):
-        """Clean and manipulate data."""
+        """Create new dataframe with subset of columns and change datatypes"""
         if self.df is not None:
+            self.df = self.df[['date', 'type', 'title', 'edgarUrl']]
             self.df['date'] = pd.to_datetime(self.df['date'])
             self.df['type'] = pd.Categorical(self.df['type'])
             self.df['title'] = pd.Categorical(self.df['title'])
@@ -74,6 +74,6 @@ class Assignment3:
         """Plot diagram and display."""
         if self.df is not None:
             fig, ax = plt.subplots()
-            self.df['type'].value_counts().plot(ax=ax, kind='barh')
+            self.df['type'].value_counts().sort_values().plot(ax=ax, kind='barh')
             plt.suptitle('SEC Filings by Type from 01-24-2022 to 02-12-2024')
             plt.show()
