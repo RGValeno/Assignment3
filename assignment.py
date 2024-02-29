@@ -9,12 +9,6 @@ from redis.commands.search.field import TextField, NumericField, TagField
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import NumericFilter, Query
 
-import numpy as np
-import seaborn as sns
-from sklearn import model_selection
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-
 class Assignment3:
 
     def __init__(self):
@@ -94,7 +88,7 @@ class Assignment3:
         """
         attempting a simple search, however not working yet.
         The following 2 lines are not functioning properly together
-        I think the problem is in line 106 between 'filings' and 'type'       ↓
+        I think the problem is in line 93 between 'filings' and 'type'       ↓
         """
         self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.{}.type", as_name="type")
         self.r.ft().create_index(self.schema, definition=IndexDefinition(prefix=["type:"], index_type=IndexType.JSON))
