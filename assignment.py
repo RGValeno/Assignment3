@@ -90,7 +90,7 @@ class Assignment3:
         The following 2 lines are not functioning properly together
         I think the problem is in line 93 between 'filings' and 'type'       ↓
         """
-        self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.{}.type", as_name="type")
+        self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.[*].type", as_name="type")
         self.r.ft().create_index(self.schema, definition=IndexDefinition(prefix=["type:"], index_type=IndexType.JSON))
         
         # self.schema = TextField("$.user.name", as_name="name"),TagField("$.user.city", as_name="city"), NumericField("$.user.age", as_name="age")
