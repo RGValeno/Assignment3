@@ -62,8 +62,8 @@ class Assignment3:
     def read_data_from_redis(self):
         """Retrieve data from Redis and convert to DataFrame"""
         result = self.r.json().get(self.data_index)
-        keys = self.r.json().get(self.data_index)['quoteSummary']['result'][0]['secFilings']['filings'][0][1]
-        print(keys)
+        redis_JSON_output = self.r.json().get(self.data_index)['quoteSummary']['result'][0]['secFilings']['filings'][0]
+        # print(redis_JSON_output)
         if result:
             df_list = result['quoteSummary']['result'][0]['secFilings']['filings']
             self.df = pd.DataFrame(df_list)
@@ -89,13 +89,12 @@ class Assignment3:
         """
         attempting a simple search, however not working yet.
         The following 2 lines are not functioning properly together
-        I think the problem is in line 93 between 'filings' and 'type'       ↓
+        I think the problem is in line 94 between 'filings' and 'type'       ↓
         """
         self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.[*].type", as_name="type")
         self.r.ft().create_index(self.schema, definition=IndexDefinition(prefix=["type:"], index_type=IndexType.JSON))
-        
-        # self.schema = TextField("$.user.name", as_name="name"),TagField("$.user.city", as_name="city"), NumericField("$.user.age", as_name="age")
-        
+                 
         print(self.r.ft().search('PRE 14A'))
+        # self.schema = TextField("$.user.name", as_name="name"),TagField("$.user.city", as_name="city"), NumericField("$.user.age", as_name="age")
         # result = self.r.json().get(self.data_index)
         # print(self.r.json().get(self.data_index)['quoteSummary']['result'][0]['secFilings']['filings'][0]['type'])
