@@ -24,16 +24,6 @@ class Assignment3:
         self.json_response = None  # Initialize json_response to None
         self.df = None  # Initialize DataFrame to None
         
-        
-        # self.schema = TextField("$.user.name", as_name="name"),TagField("$.user.city", as_name="city"), NumericField("$.user.age", as_name="age")
-        
-        #####
-        # not sure the following line (33) is functioning properly - probablly not
-        # after 'filings', i'm not sure of the proper syntax as the json object keys here are incremented
-        # self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.{}.type", as_name="type")
-    
-        
-        
     @staticmethod
     def load_config():
         """Load configuration using config.yaml"""
@@ -104,10 +94,12 @@ class Assignment3:
         """
         attempting a simple search, however not working yet.
         The following 2 lines are not functioning properly together
-        I think the problem is in line 109 between 'filings' and 'type'       ↓
+        I think the problem is in line 106 between 'filings' and 'type'       ↓
         """
         self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.{}.type", as_name="type")
         self.r.ft().create_index(self.schema, definition=IndexDefinition(prefix=["type:"], index_type=IndexType.JSON))
+        
+        # self.schema = TextField("$.user.name", as_name="name"),TagField("$.user.city", as_name="city"), NumericField("$.user.age", as_name="age")
         
         print(self.r.ft().search('PRE 14A'))
         # result = self.r.json().get(self.data_index)
