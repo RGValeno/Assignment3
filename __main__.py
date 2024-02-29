@@ -1,4 +1,4 @@
-from assignment import Assignment3
+from assignment3_JSON_redis import Assignment3
 
 def main():
     assignment = Assignment3()
