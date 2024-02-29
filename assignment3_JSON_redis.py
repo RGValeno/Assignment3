@@ -82,7 +82,7 @@ class Assignment3:
         if self.df is not None:
             fig, ax = plt.subplots()
             self.df['type'].value_counts().sort_values().plot(ax=ax, kind='barh')
-            plt.suptitle('SEC Filings by Type from 01-24-2022 to 02-12-2024')
+            plt.suptitle('SEC Filings for "AMRN" by Type from 01-24-2022 to 02-12-2024')
             plt.show()
     
     def simple_search(self):

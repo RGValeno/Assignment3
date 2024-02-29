@@ -6,7 +6,7 @@ def main():
     assignment.json_into_redis()
     assignment.read_data_from_redis()
     assignment.clean_data()
-    # assignment.plot_diagram()
+    assignment.plot_diagram()
     assignment.simple_search()
 
 if __name__ == "__main__":
