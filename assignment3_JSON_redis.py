@@ -62,7 +62,8 @@ class Assignment3:
     def read_data_from_redis(self):
         """Retrieve data from Redis and convert to DataFrame"""
         result = self.r.json().get(self.data_index)
-        # print(result)
+        keys = self.r.json().get(self.data_index)['quoteSummary']['result'][0]['secFilings']['filings'][0][1]
+        print(keys)
         if result:
             df_list = result['quoteSummary']['result'][0]['secFilings']['filings']
             self.df = pd.DataFrame(df_list)
