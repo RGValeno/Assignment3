@@ -5,6 +5,15 @@ import json
 import pandas as pd
 import matplotlib.pyplot as plt
 from redis.commands.json.path import Path
+from redis.commands.search.field import TextField, NumericField, TagField
+from redis.commands.search.indexDefinition import IndexDefinition, IndexType
+from redis.commands.search.query import NumericFilter, Query
+
+import numpy as np
+import seaborn as sns
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
 
 class Assignment3:
 
@@ -14,7 +23,17 @@ class Assignment3:
         self.set_api_details()  # Set API details from the loaded configuration
         self.json_response = None  # Initialize json_response to None
         self.df = None  # Initialize DataFrame to None
-
+        
+        
+        # self.schema = TextField("$.user.name", as_name="name"),TagField("$.user.city", as_name="city"), NumericField("$.user.age", as_name="age")
+        
+        #####
+        # not sure the following line (33) is functioning properly - probablly not
+        # after 'filings', i'm not sure of the proper syntax as the json object keys here are incremented
+        # self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.{}.type", as_name="type")
+    
+        
+        
     @staticmethod
     def load_config():
         """Load configuration using config.yaml"""
@@ -22,7 +41,7 @@ class Assignment3:
             return yaml.safe_load(file)
 
     def get_redis_connection(self):
-        """Create a Redis connection using the config.yaml."""
+        """Create a Redis connection using the config.yaml"""
         return redis.Redis(
             host=self.config["redis"]["host"],
             port=self.config["redis"]["port"],
@@ -38,25 +57,28 @@ class Assignment3:
         self.url = api_config['url']
         self.headers = api_config['headers']
         self.params = api_config['querystring']
-        self.data_index = self.config['API']['JSON_placeholder']['index']
+        self.data_index = api_config['index']
 
     def read_api(self):
-        """Execute API call and store in variable."""
+        """Execute API call and store in variable"""
         response = requests.get(self.url, headers=self.headers, params=self.params)
+        # print(response.json())
         if response.status_code == 200:
             self.json_response = response.json()
         else:
             print(f"Error: {response.status_code}")
 
     def json_into_redis(self):
-        """Load JSON response into Redis database."""
+        """Load JSON response into Redis database"""
         if self.json_response:
             self.r.flushall()
             self.r.json().set(self.data_index, Path.root_path(), self.json_response)
+            # self.r.json().set(self.data_index, '$', self.json_response)
 
     def read_data_from_redis(self):
-        """Retrieve data from Redis and convert to DataFrame."""
+        """Retrieve data from Redis and convert to DataFrame"""
         result = self.r.json().get(self.data_index)
+        # print(result)
         if result:
             df_list = result['quoteSummary']['result'][0]['secFilings']['filings']
             self.df = pd.DataFrame(df_list)
@@ -71,9 +93,22 @@ class Assignment3:
             self.df['edgarUrl'] = self.df['edgarUrl'].astype(str)
 
     def plot_diagram(self):
-        """Plot diagram and display."""
+        """Plot 'SEC Filings by Type' diagram and display"""
         if self.df is not None:
             fig, ax = plt.subplots()
             self.df['type'].value_counts().sort_values().plot(ax=ax, kind='barh')
             plt.suptitle('SEC Filings by Type from 01-24-2022 to 02-12-2024')
             plt.show()
+    
+    def simple_search(self):
+        """
+        attempting a simple search, however not working yet.
+        The following 2 lines are not functioning properly together
+        I think the problem is in line 109 between 'filings' and 'type'       ↓
+        """
+        self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.{}.type", as_name="type")
+        self.r.ft().create_index(self.schema, definition=IndexDefinition(prefix=["type:"], index_type=IndexType.JSON))
+        
+        print(self.r.ft().search('PRE 14A'))
+        # result = self.r.json().get(self.data_index)
+        # print(self.r.json().get(self.data_index)['quoteSummary']['result'][0]['secFilings']['filings'][0]['type'])
