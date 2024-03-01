@@ -10,8 +10,20 @@ from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import NumericFilter, Query
 
 class Assignment3:
-
+    """_summary_
+    """
     def __init__(self):
+        """Initializes the class.
+
+    Loads the configuration, establishes a Redis connection, sets API details,
+    initializes json_response and df attributes.
+
+    Args:
+        self: The instance of the class.
+
+    Returns:
+        None
+        """
         self.config = self.load_config()  # Load configuration at initialization
         self.r = self.get_redis_connection()  # Establish Redis connection
         self.set_api_details()  # Set API details from the loaded configuration
