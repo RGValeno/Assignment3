@@ -101,7 +101,7 @@ class Assignment3:
         """
         attempting a simple search, however not working yet.
         The following 2 lines are not functioning properly together
-        I think the problem is in line 94 between 'filings' and 'type'       ↓
+        I think the problem is in line 106 between 'filings' and 'type'       ↓
         """
         self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.[*].type", as_name="type")
         self.r.ft().create_index(self.schema, definition=IndexDefinition(prefix=["type:"], index_type=IndexType.JSON))
