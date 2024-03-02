@@ -10,7 +10,13 @@ from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import NumericFilter, Query
 
 class Assignment3:
-    """_summary_
+    """This class will:
+        - execute an api request of SEC Filings
+        - store api response JSON in a redis db
+        - pull JSON from redis and convert to dataframe
+        - operate on dataframe to clean and visualize data
+        - create schema and index JSON in redis (not working)
+        - operate on indexed JSON
     """
     def __init__(self):
         """Initializes the class.
@@ -22,7 +28,9 @@ class Assignment3:
         self: The instance of the class.
 
     Returns:
-        None
+        Chart - distrubtion of SEC Filing types
+        Simplesearch results for objects with type "PRE 14A"
+        Total number of JSON objects
         """
         self.config = self.load_config()  # Load configuration at initialization
         self.r = self.get_redis_connection()  # Establish Redis connection
@@ -72,7 +80,7 @@ class Assignment3:
             # self.r.json().set(self.data_index, '$', self.json_response)
 
     def read_data_from_redis(self):
-        """Retrieve data from Redis and convert to DataFrame"""
+        """Retrieve data from Redis and convert to DataFrame with pandas"""
         result = self.r.json().get(self.data_index)
         redis_JSON_output = self.r.json().get(self.data_index)['quoteSummary']['result'][0]['secFilings']['filings'][0]
         # print(redis_JSON_output)
@@ -81,7 +89,7 @@ class Assignment3:
             self.df = pd.DataFrame(df_list)
 
     def clean_data(self):
-        """Create new dataframe with subset of columns and change datatypes"""
+        """Create new dataframe with subset of columns and change datatypes with pandas"""
         if self.df is not None:
             self.df = self.df[['date', 'type', 'title', 'edgarUrl']]
             self.df['date'] = pd.to_datetime(self.df['date'])
@@ -97,16 +105,31 @@ class Assignment3:
             plt.suptitle('SEC Filings for "AMRN" by Type from 01-24-2022 to 02-12-2024')
             plt.show()
     
-    def simple_search(self):
+    def index_JSON(self):
         """
-        attempting a simple search, however not working yet.
+        attempting to create schema and index the JSON, however not working.
         The following 2 lines are not functioning properly together
         I think the problem is in line 106 between 'filings' and 'type'       ↓
+        I believe this is due to the indexing redis is creating?
         """
         self.schema = TagField("$.quoteSummary.result.[0].secFilings.filings.[*].type", as_name="type")
         self.r.ft().create_index(self.schema, definition=IndexDefinition(prefix=["type:"], index_type=IndexType.JSON))
-                 
+
+    def simple_search(self):
+        """
+        Do: Search JSON 
+        Returns: 
+        Notes: seems to be working however not returning expected output due to imoroper indexing in method: index_JSON() (I believe)
+        """
         print(self.r.ft().search('PRE 14A'))
         # self.schema = TextField("$.user.name", as_name="name"),TagField("$.user.city", as_name="city"), NumericField("$.user.age", as_name="age")
         # result = self.r.json().get(self.data_index)
         # print(self.r.json().get(self.data_index)['quoteSummary']['result'][0]['secFilings']['filings'][0]['type'])
+
+    def query(self):
+        """
+        Do: counts the total number of JSON objects
+        seems to be working however not returning expected output due to imoroper indexing in method: index_JSON() (I believe)
+        """
+        self.q = Query("*").paging(0, 0)
+        print(self.r.ft().search(self.q).total)

@@ -7,7 +7,9 @@ def main():
     assignment.read_data_from_redis()
     assignment.clean_data()
     assignment.plot_diagram()
+    assignment.index_JSON()
     assignment.simple_search()
+    assignment.query()
 
 if __name__ == "__main__":
     main()
