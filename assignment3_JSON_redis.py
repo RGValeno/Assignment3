@@ -4,6 +4,7 @@ import requests
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+from icecream import ic
 from redis.commands.json.path import Path
 from redis.commands.search.field import TextField, NumericField, TagField
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
@@ -66,7 +67,7 @@ class Assignment3:
     def read_api(self):
         """Execute API call and store in variable"""
         response = requests.get(self.url, headers=self.headers, params=self.params)
-        # print(response.json())
+        ic(response.json())
         if response.status_code == 200:
             self.json_response = response.json()
         else:
